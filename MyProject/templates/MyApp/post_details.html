@@ -1,0 +1,23 @@
+<! -- наследование шаблона default -->
+{% extends 'flatpages/default.html' %}
+ 
+{% block title %} Post details {% endblock title %}
+{% load custom_template_funcs %}
+{% block content %}
+
+<table>
+        <tr>
+            <td valign="top" align="center"><b>№ поста</b></td>
+            <td align="center"><b>Заголовок<p>(первые 4 слова ...)</b></td>
+            <td align="center"><b>Дата публикации<p>день.месяц.год</b></td>
+            <td align="center"><b>Текст (первые 20 символов ...)</b></td>
+        </tr>
+    <tr>
+        <td align="center">{{ post.id }}</td>
+        <td>{{ post.header|default:"Без заголовка"|truncatewords:4|censor:'***' }}</td>
+        <td align="center">{{ post.post_date|default:"Без даты"|date:'d.m.Y' }}</td>
+        <td>{{ post.body|truncatechars:20|censor:'***' }}</td>
+    </tr>
+</table>
+
+{% endblock content %}

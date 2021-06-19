@@ -1,0 +1,105 @@
+<! -- наследование шаблона default -->
+{% extends 'flatpages/default.html' %}
+
+{% block title %} News {% endblock title %}
+
+{% load custom_template_funcs %}
+
+<! -- начало контента -->
+{% block content %}
+
+<h1>Новости</h1>
+<h6>Всего постов: {{ all_news_count }}</h6>
+<h6>Найдено постов: {{ posts_found }}</h6>
+{# <hr> #}
+{# <h6>Список новостей: {{ object_list }}</h6> #}
+
+{# согласно синтаксису языка шаблонов Django, #}
+<! переменные должны быть окружены двойными фигурными скобками {{ news }} >
+{# а теги в одну фигурную скобку и символ "%": {% news %} пишутся, когда нужно задать условие #}
+<!-- Перед таблицей добавим форму для поиска -->
+<form method="GET">
+    {{ post_search.form.as_p }} <!-- Форму от фильтров за нас сделает django.
+    А вот кнопку, увы придётся делать самому -->
+    <input type="submit" value="Найти">
+</form>
+<hr>
+
+{% if object_list %}
+    <table>
+        <tr>
+            <td valign="top" align="center"><b>№ поста</b></td>
+            <td align="center"><b>Автор</b></td>
+            <td align="center"><b>Заголовок<p>(первые 4 слова ...)</b></td>
+            <td align="center"><b>Дата публикации<p>день.месяц.год</b></td>
+            <td align="center"><b>Текст (первые 20 символов ...)</b></td>
+        </tr>
+        {% for post in object_list %}
+        <tr>
+            <td align="center">{{ post.id }}</td>
+            <td align="center">{{ post.author }}</td>
+            <td align="center">
+                <!-- гиперсслыка -->
+                <a href="{% url 'post_details' post.id %}">
+                    {{ post.header|default:"Без заголовка"|truncatewords:4|censor:'***' }}
+                </a>
+            </td>
+            <td align="center">{{ post.post_date|default:"Без даты"|date:'d.m.Y' }}</td>
+            <td>
+                {#{ post.body|truncatechars:20|censor:'***' }#}
+                {{ post.body|censor:'***'|truncatewords:4 }}
+            </td>
+        {% endfor %}
+        </tr>
+    </table>
+{% else %}
+<h2>
+    Новостей нет!
+</h2>
+{% endif %}
+
+<br>
+
+<!-- блок пагинатора -->
+{% load my_tags %}
+
+{% if is_paginated %}
+  {% if page_obj.has_previous %}
+    <a href="?{% param_replace page=1 %}">First</a>
+    {% if page_obj.previous_page_number != 1 %}
+      <a href="?{% param_replace page=page_obj.previous_page_number %}">Previous</a>
+    {% endif %}
+  {% endif %}
+
+  Page {{ page_obj.number }} of {{ paginator.num_pages }}
+
+  {% if page_obj.has_next %}
+    {% if page_obj.next_page_number != paginator.num_pages %}
+      <a href="?{% param_replace page=page_obj.next_page_number %}">Next</a>
+    {% endif %}
+    <a href="?{% param_replace page=paginator.num_pages %}">Last</a>
+  {% endif %}
+
+  <p>Objects {{ page_obj.start_index }}—{{ page_obj.end_index }}</p>
+{% endif %}
+<!-- блок пагинатора -->
+
+<hr>
+<form method="POST">
+    {% csrf_token %}
+    <label for="author">Автор</label>
+    <input name="author" type="text">
+
+    <label for="header">Заголовок</label>
+    <input name="header" type="text">
+
+    <label for="body">Текст сообщения</label>
+    <input name="body" type="text">
+
+    <label for="post_date">Дата</label>
+    <input name="post_date" type="text">
+
+    <input type="submit" value="Добавить товар">
+</form>
+<! -- конец контента -->
+{% endblock content %}
