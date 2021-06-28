@@ -4,10 +4,10 @@
 {% block title %} Post List {% endblock title %}
 
 {% block content %}
-<h3>Новый пост</h3>
+<h3>Удаление поста</h3>
 <form method="POST" action="">
     {% csrf_token %}
-    {{ form.as_p }}
-    <input type="submit" value="Запостить!">
+    <p>Вы действительно хотите удалить пост "{{ object.header }}" от {{ delete_post_form.post_date|date:'d.m.Y' }}?</p>
+    <input type="submit" value="Удалить" />
 </form>
 {% endblock content %}
