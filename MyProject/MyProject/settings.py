@@ -128,3 +128,9 @@ STATIC_URL = '/static/'
 # https://docs.djangoproject.com/en/3.2/ref/settings/#default-auto-field
 
 DEFAULT_AUTO_FIELD = 'django.db.models.BigAutoField'
+
+if __name__ == '__main__':
+    print(Path(__file__).resolve().parent.parent.parent)
+    print(Path(__file__).resolve().parent.parent)
+    print(Path(__file__).resolve().parent)
+    print(Path(__file__).resolve())

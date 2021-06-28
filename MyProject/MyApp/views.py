@@ -1,16 +1,7 @@
-from django.contrib.auth.models import User
-from django.shortcuts import render
-from django.views.generic import CreateView, ListView, DetailView
+from django.views.generic import CreateView, UpdateView, DeleteView, ListView, DetailView
 from .models import Post
-
-# импортируем класс, позволяющий удобно осуществлять постраничный вывод
-from django.core.paginator import Paginator
-
-# импортируем созданную нами форму
-from .forms import PostForm  # , PostSearchForm  # т.к. мы создали именно class PostForm(ModelForm)
-
-# импортируем наш фильтр
-from .filters import PostFilterSet
+from django.urls import reverse_lazy  # импортируем новые методы
+from .filters import PostFilterSet  # импортируем наш фильтр
 
 
 class FilteredPostListView(ListView):
@@ -63,38 +54,38 @@ class PostListView(FilteredPostListView):
     filterset_class = PostFilterSet
     paginate_by = 10
 
-    # def post(self, request, *args, **kwargs):
-    #     form = self.form_class(request.POST)
-    #     if form.is_valid():
-    #         form.save()
-    #     return super().get(request, *args, **kwargs)
-    def post(self, request, *args, **kwargs):
-        # берём значения для нового товара из POST-запроса отправленного на сервер
-        author = request.POST['author']
-        header = request.POST['header']
-        body = request.POST['body']
-        post_date = request.POST['post_date']
-
-        Post(author=User.objects.get(username=author), header=header, body=body, post_date=post_date).save()
-        return super().get(request, *args, **kwargs)  # отправляем пользователя обратно на GET-запрос.
-
 
 # пост детально
 class PostDetailedView(DetailView):
+    model = Post
     template_name = 'MyApp/post_details.html'
     queryset = Post.objects.all()
 
 
 # создание поста
 class PostCreateView(CreateView):
+    model = Post
     context_object_name = 'new_post_form'
     template_name = 'MyApp/post_create.html'
-    form_class = PostForm
+    fields = ('author', 'header', 'body', 'post_date')
+    success_url = reverse_lazy('post_list')
 
 
-# поиск постов
-# class PostSearchView(CreateView):
-#     context_object_name = 'post_search'
-#     template_name = 'MyApp/post_search.html'
-#     # form_class = PostSearchForm
-#
+# редактирование поста
+class PostUpdateView(UpdateView):
+    model = Post
+    context_object_name = 'edit_post_form'
+    template_name = 'MyApp/post_edit.html'
+    fields = ('header', 'body')
+    success_url = reverse_lazy(viewname='post_list')
+
+
+# удаление поста
+class PostDeleteView(DeleteView):
+    model = Post
+    context_object_name = 'delete_post_form'
+    template_name = 'MyApp/post_delete.html'
+    fields = ('header', 'post_date')
+    success_url = reverse_lazy('post_list')
+
+

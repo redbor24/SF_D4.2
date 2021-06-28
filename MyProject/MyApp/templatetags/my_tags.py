@@ -1,5 +1,6 @@
 # <app>/templatetags/my_tags.py
 from django import template
+from django.conf import settings
 
 register = template.Library()
 
@@ -31,3 +32,29 @@ def param_replace(context, **kwargs):
     for k in [k for k, v in d.items() if not v]:
         del d[k]
     return d.urlencode()
+
+
+# Регистрируем тег, с помощью которого будем получать атрибуты из файла settings
+@register.simple_tag
+def BASE_DIR(name):
+    # return getattr(settings, name, "")
+    return getattr(settings, 'BASE_DIR', "")
+
+
+@register.simple_tag
+def TEMPLATES(name):
+    # return getattr(settings, name, "")
+    return getattr(settings, 'TEMPLATES', "")[0]['DIRS']
+
+
+@register.simple_tag
+def STATIC_ROOT(name):
+    # return getattr(settings, name, "")
+    return getattr(settings, 'STATIC_ROOT', "")
+
+
+@register.simple_tag
+def STATIC_URL(name):
+    # return getattr(settings, name, "")
+    return getattr(settings, 'STATIC_URL', "")
+

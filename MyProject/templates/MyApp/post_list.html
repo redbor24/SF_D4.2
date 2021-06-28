@@ -8,7 +8,7 @@
 <! -- начало контента -->
 {% block content %}
 
-<h1>Новости</h1>
+<h1>Поиск</h1>
 <h6>Всего постов: {{ all_news_count }}</h6>
 <h6>Найдено постов: {{ posts_found }}</h6>
 {# <hr> #}
@@ -19,19 +19,22 @@
 {# а теги в одну фигурную скобку и символ "%": {% news %} пишутся, когда нужно задать условие #}
 <!-- Перед таблицей добавим форму для поиска -->
 <form method="GET">
-    {{ post_search.form.as_p }} <!-- Форму от фильтров за нас сделает django.
+    {{ post_search.form }} <!-- Форму от фильтров за нас сделает django.
     А вот кнопку, увы придётся делать самому -->
     <input type="submit" value="Найти">
 </form>
 <hr>
 
+{% load my_tags %}
+
 {% if object_list %}
+<h1>Новости</h1>
     <table>
         <tr>
             <td valign="top" align="center"><b>№ поста</b></td>
             <td align="center"><b>Автор</b></td>
             <td align="center"><b>Заголовок<p>(первые 4 слова ...)</b></td>
-            <td align="center"><b>Дата публикации<p>день.месяц.год</b></td>
+            <td align="center"><b>Дата публикации</b></td>
             <td align="center"><b>Текст (первые 20 символов ...)</b></td>
         </tr>
         {% for post in object_list %}
@@ -43,6 +46,8 @@
                 <a href="{% url 'post_details' post.id %}">
                     {{ post.header|default:"Без заголовка"|truncatewords:4|censor:'***' }}
                 </a>
+                <a href="{% url 'edit_post_form' post.pk %}"> (edit)</a>
+                <a href="{% url 'delete_post_form' post.pk %}"> (delete)</a>
             </td>
             <td align="center">{{ post.post_date|default:"Без даты"|date:'d.m.Y' }}</td>
             <td>
@@ -61,7 +66,6 @@
 <br>
 
 <!-- блок пагинатора -->
-{% load my_tags %}
 
 {% if is_paginated %}
   {% if page_obj.has_previous %}
@@ -84,22 +88,5 @@
 {% endif %}
 <!-- блок пагинатора -->
 
-<hr>
-<form method="POST">
-    {% csrf_token %}
-    <label for="author">Автор</label>
-    <input name="author" type="text">
-
-    <label for="header">Заголовок</label>
-    <input name="header" type="text">
-
-    <label for="body">Текст сообщения</label>
-    <input name="body" type="text">
-
-    <label for="post_date">Дата</label>
-    <input name="post_date" type="text">
-
-    <input type="submit" value="Добавить товар">
-</form>
 <! -- конец контента -->
 {% endblock content %}
