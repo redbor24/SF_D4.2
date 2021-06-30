@@ -2,6 +2,7 @@ from django.views.generic import CreateView, UpdateView, DeleteView, ListView, D
 from .models import Post
 from django.urls import reverse_lazy  # импортируем новые методы
 from .filters import PostFilterSet  # импортируем наш фильтр
+from django.contrib.auth.mixins import LoginRequiredMixin
 
 
 class FilteredPostListView(ListView):
@@ -63,7 +64,7 @@ class PostDetailedView(DetailView):
 
 
 # создание поста
-class PostCreateView(CreateView):
+class PostCreateView(LoginRequiredMixin, CreateView):
     model = Post
     context_object_name = 'new_post_form'
     template_name = 'MyApp/post_create.html'
@@ -72,7 +73,7 @@ class PostCreateView(CreateView):
 
 
 # редактирование поста
-class PostUpdateView(UpdateView):
+class PostUpdateView(LoginRequiredMixin, UpdateView):
     model = Post
     context_object_name = 'edit_post_form'
     template_name = 'MyApp/post_edit.html'
@@ -81,7 +82,7 @@ class PostUpdateView(UpdateView):
 
 
 # удаление поста
-class PostDeleteView(DeleteView):
+class PostDeleteView(LoginRequiredMixin, DeleteView):
     model = Post
     context_object_name = 'delete_post_form'
     template_name = 'MyApp/post_delete.html'

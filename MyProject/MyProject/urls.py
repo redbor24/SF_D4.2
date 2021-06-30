@@ -17,8 +17,10 @@ from django.contrib import admin
 from django.urls import path, include
 
 urlpatterns = [
-    # path('admin/', admin.site.urls),
-    # чтобы все адреса из файла NewsPaper/urls.py
-    # сами автоматически подключались когда мы их добавим.
+    path('admin/', admin.site.urls),
+    path('accounts/', include('django.contrib.auth.urls')),
+    path('accounts/', include('accounts.urls')),
+    # чтобы все адреса из файла NewsPaper/urls.py сами автоматически подключались когда мы их добавим.
     path('news/', include('MyApp.urls')),
+    path('', include('MyApp.urls')),
 ]
