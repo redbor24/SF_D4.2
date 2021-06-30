@@ -124,6 +124,9 @@ USE_TZ = True
 
 STATIC_URL = '/static/'
 
+# без этой строки почему-то слетали bootstrap-шаблоны
+STATICFILES_DIRS = (os.path.join(BASE_DIR, "static"), '/var/www/static/',)
+
 # Default primary key field type
 # https://docs.djangoproject.com/en/3.2/ref/settings/#default-auto-field
 
@@ -134,3 +137,4 @@ if __name__ == '__main__':
     print(Path(__file__).resolve().parent.parent)
     print(Path(__file__).resolve().parent)
     print(Path(__file__).resolve())
+    print(f'BASE_DIR: {BASE_DIR}')
